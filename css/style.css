@@ -1,0 +1,83 @@
+* {margin: 0%;}
+html {
+   scroll-behavior: smooth;
+}
+body {
+    background-color: #fff;
+    font-family: 'Montserrat', sans-serif;
+    background-image: url("../img/homeAgeBlanco.png");
+    background-repeat: no-repeat;
+    background-position-x: 50%;
+    background-position-y: 50%;
+   }
+
+/*/////////////////////////////////////////HEADER*/
+#main-title {
+    display: block;
+    background-color: #47B7FF;
+}
+#main-title ul{
+   list-style: none;
+   text-align: center;
+}
+#main-title img {width: 20%;}
+ /*//////////////           Nav                 */
+ nav {
+   background-color: #47B7FF;
+    /* margin: 10px;*/
+    padding: 10px;
+    border-radius: 10px;
+    /* margin-left: 20%;
+    margin-right: 20%; */
+    position: fixed;
+    z-index: 100;
+    
+ }
+ nav ul {
+    list-style: none;
+    text-align: center;
+ }
+ nav li {
+    display: inline-block;
+    padding-left: 20px;
+ }
+
+ nav a {
+    color: #000;
+    font-size: 20px;
+ }
+ nav a:hover {
+    color: #47B7FF;
+ }
+
+ nav a:link, a:visited, a:active {
+    text-decoration: none;
+ }
+
+/*////////////////////////////////////////////MAIN*/
+.row {
+   height: 400px;
+   display: grid;
+   grid-template-areas: "a a a";
+   gap: 10%;
+   grid-auto-columns: 300px;
+   display: flex;
+   justify-content: center;
+}
+
+.row > div {
+   background-color: #47b8ff5e;
+   width: 33.33%;
+}
+
+.row a:link, a:visited, a:active {
+   text-decoration: none;
+}
+
+.row a:hover {
+   color: #47B7FF;
+}
+
+.row a {
+   color: #000;
+}
