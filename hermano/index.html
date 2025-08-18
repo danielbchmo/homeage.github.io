@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>¡Feliz Cumple! — [Nombre de tu hermano]</title>
+  <meta name="description" content="Página de cumpleaños con animaciones, cuenta regresiva y galería." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0f1226; /* fondo principal */
+      --fg:#ffffff; /* texto */
+      --muted:#a9b1d6; /* texto secundario */
+      --primary:#8b5cf6; /* violeta */
+      --secondary:#06b6d4; /* cian */
+      --accent:#f59e0b; /* ámbar */
+      --glass:rgba(255,255,255,.08);
+      --border:rgba(255,255,255,.12);
+      --shadow:0 10px 30px rgba(0,0,0,.35);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Poppins, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+      color:var(--fg);
+      background: radial-gradient(1000px 600px at 10% -10%, #1a1f4a 0%, transparent 60%),
+                  radial-gradient(900px 500px at 110% 0%, #0a3b46 0%, transparent 55%),
+                  linear-gradient(180deg, #0b0d1f 0%, #0f1226 65%);
+      overflow-x:hidden;
+    }
+
+    /* Burbujas decorativas */
+    .blob{
+      position:absolute; inset:auto; filter:blur(40px); opacity:.35; pointer-events:none;
+      border-radius:50%; transform:translate(-50%, -50%); mix-blend-mode:screen; z-index:0;
+    }
+    .blob.violet{background:radial-gradient(circle at 30% 30%, #a78bfa 0%, transparent 70%); width:480px; height:480px; top:20%; left:80%;}
+    .blob.cyan{background:radial-gradient(circle at 50% 50%, #22d3ee 0%, transparent 70%); width:420px; height:420px; top:65%; left:15%;}
+    .blob.amber{background:radial-gradient(circle at 60% 40%, #fbbf24 0%, transparent 70%); width:320px; height:320px; top:10%; left:20%;}
+
+    header{
+      position:sticky; top:0; z-index:10; backdrop-filter:saturate(120%) blur(10px);
+      background:linear-gradient(180deg, rgba(15,18,38,.85), rgba(15,18,38,.35)); border-bottom:1px solid var(--border);
+    }
+    .wrap{max-width:1100px; margin:0 auto; padding:20px;}
+    .nav{display:flex; align-items:center; justify-content:space-between; gap:16px}
+    .brand{display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:.4px}
+    .logo{width:36px; height:36px; display:grid; place-items:center; border-radius:12px; background:conic-gradient(from 180deg, var(--primary), var(--secondary), var(--accent), var(--primary)); box-shadow:0 0 20px rgba(139,92,246,.5)}
+    .chip{font-size:.75rem; color:#0b0d1f; background:linear-gradient(135deg, #fef3c7, #fde68a); padding:4px 10px; border-radius:999px; font-weight:600}
+
+    .btn{appearance:none; border:1px solid var(--border); background:var(--glass); color:var(--fg); padding:10px 16px; border-radius:14px; cursor:pointer; transition:.25s all; font-weight:600}
+    .btn:hover{transform:translateY(-2px); box-shadow:var(--shadow);}
+    .btn.primary{background:linear-gradient(135deg, rgba(139,92,246,.25), rgba(34,211,238,.25)); border-color:transparent}
+
+    .hero{position:relative; padding:80px 20px 40px; text-align:center}
+    .hero h1{font-size:clamp(2.2rem, 7vw, 4rem); line-height:1.05; margin:10px 0 12px; font-weight:800}
+    .spark{background:linear-gradient(90deg, var(--accent), var(--secondary)); -webkit-background-clip:text; background-clip:text; color:transparent}
+    .sub{color:var(--muted); font-weight:400; font-size:clamp(1rem, 2.2vw, 1.2rem)}
+    .badges{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:18px 0 26px}
+    .badge{border:1px solid var(--border); background:var(--glass); padding:6px 12px; border-radius:999px; font-size:.85rem}
+
+    .cards{display:grid; grid-template-columns:repeat(3, 1fr); gap:18px; margin:28px 0}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03)); border:1px solid var(--border); border-radius:18px; padding:18px; box-shadow:var(--shadow)}
+    .card h3{margin:6px 0 10px; font-size:1.1rem}
+    .card p{margin:0; color:var(--muted)}
+    .photo{border-radius:14px; overflow:hidden; aspect-ratio:16/10; background:#1c214f; display:grid; place-items:center; border:1px dashed rgba(255,255,255,.15)}
+    .photo span{color:#c7d2fe; font-size:.9rem}
+
+    .section-title{font-size:1.6rem; margin:48px 0 8px; text-align:center}
+    .muted{color:var(--muted); text-align:center; margin:0 0 20px}
+
+    .gallery{display:grid; grid-template-columns:repeat(6, 1fr); gap:10px}
+    .gallery .g{aspect-ratio:1/1; border-radius:14px; background:#131538; border:1px solid var(--border); overflow:hidden}
+    .gallery .g.large{grid-column:span 3; grid-row:span 2}
+    .gallery .g.wide{grid-column:span 2}
+
+    .countdown{display:flex; justify-content:center; gap:14px; flex-wrap:wrap; margin-top:16px}
+    .timebox{min-width:90px; text-align:center; padding:12px; border-radius:16px; border:1px solid var(--border); background:var(--glass)}
+    .timebox .num{display:block; font-size:1.8rem; font-weight:800}
+    .timebox .lab{display:block; font-size:.75rem; color:var(--muted)}
+
+    footer{margin-top:50px; padding:26px 20px 60px; text-align:center; color:var(--muted)}
+
+    /* Globos flotantes */
+    .balloon{position:absolute; bottom:-120px; font-size:42px; opacity:.7; animation:floatUp linear infinite; filter:drop-shadow(0 6px 10px rgba(0,0,0,.35));}
+    @keyframes floatUp{0%{transform:translateY(0) translateX(0);}100%{transform:translateY(-120vh) translateX(-30px);}}
+
+    /* Responsive */
+    @media (max-width: 900px){
+      .cards{grid-template-columns:1fr 1fr}
+      .gallery{grid-template-columns:repeat(4, 1fr)}
+    }
+    @media (max-width: 640px){
+      .cards{grid-template-columns:1fr}
+      .gallery{grid-template-columns:repeat(2, 1fr)}
+      .timebox{min-width:72px}
+    }
+  </style>
+</head>
+<body>
+  <!-- decor -->
+  <div class="blob violet"></div>
+  <div class="blob cyan"></div>
+  <div class="blob amber"></div>
+
+  <!-- confetti canvas -->
+  <canvas id="confetti" style="position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:20;"></canvas>
+
+  <header>
+    <div class="wrap nav">
+      <div class="brand">
+        <div class="logo">🎉</div>
+        <div>¡Feliz Cumple!</div>
+        <span class="chip" id="ageChip">20</span>
+      </div>
+      <div style="display:flex; gap:10px; align-items:center">
+        <button class="btn" id="confettiBtn">Lluvia de confeti</button>
+        <a class="btn primary" href="#recuerdos">Ver recuerdos</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="wrap">
+        <div class="badges">
+          <span class="badge">Fecha: <strong id="dateBadge">[]</strong></span>
+           <span class="badge">Signo: <strong id="signo">🎂</strong></span>
+          <span class="badge">Lugar: <strong id="lugar">[Guadalajara, MX]</strong></span>
+        </div>
+        <h1>¡Feliz cumpleaños, <span class="spark" id="nombre">[]</span>!</h1>
+        <p class="sub" id="mensajeIntro">Jamás olvides lo mucho que te quiero. Siempre estaré para ti. 💜</p>
+        <div style="display:flex; gap:12px; justify-content:center; margin-top:14px; flex-wrap:wrap">
+          <!-- <a class="btn primary" id="btnFelicitacion" href="mailto:?subject=%C2%A1Feliz%20cumple!&body=Te%20deseo%20un%20a%C3%B1o%20incre%C3%ADble%20%F0%9F%8E%89">Enviar felicitación</a> -->
+          <!-- <a class="btn" href="#cuenta">Ver cuenta regresiva</a> -->
+        </div>
+        <div class="countdown" id="countdown" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="wrap" id="recuerdos" style="position:relative; z-index:1">
+      <h2 class="section-title">Tres recuerdos chidos</h2>
+      <p class="muted">Checa esto:</p>
+      <div class="cards">
+        <div class="card">
+          <div class="photo"><span><img src="img/1.jpg" alt="" style="width: 100%;margin-top: -100px;"></span></div>
+          <h3>Recuerdo #1</h3>
+          <p>Ese viajecito que nos rifamos a la playa. Inolvidable. 🏖️</p>
+        </div>
+        <div class="card">
+          <div class="photo"><span><img src="img/2.jpg" alt="" style="width: 100%;margin-top: -100px;"></span></div>
+          <h3>Recuerdo #2</h3>
+          <p>Donde mismo, pero con el abue. 🔥</p>
+        </div>
+        <div class="card">
+          <div class="photo"><span><img src="img/3.jpg" alt="" style="width: 100%;margin-top: -100px;"></span></div>
+          <h3>Recuerdo #3</h3>
+          <p>Con la morrilla. 🫡</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap" id="galeria">
+      <h2 class="section-title">Galería</h2>
+      <p class="muted">Lo que me encontré por ahí...</p>
+      <div class="gallery">
+        <div class="g large"><img src="img/7.jpg" alt="" style="width: 100%;height: 100%;"></div>
+        <div class="g"><img src="img/11.jpg" alt="" style="width: 100%;height: 100%;"></div>
+        <div class="g"><img src="img/9.jpg" alt="" style="width: 100%;height: 100%;"></div>
+        <div class="g wide"><img src="img/8.jpg" alt="" style="width: 100%;height: 100%;"></div>
+        <div class="g"><img src="img/12.jpg" alt="" style="width: 100%;height: 100%;"></div>
+        <div class="g"><img src="img/6.jpg" alt="" style="width: 100%;height: 100%;"></div>
+        <div class="g"><img src="img/5.jpg" alt="" style="width: 100%;height: 100%;"></div>
+        <div class="g"><img src="img/4.jpg" alt="" style="width: 100%;height: 100%;"></div>
+      </div>
+      <br>
+      <p class="muted">Obvio son imagenes de mi galería. No iba a utilizar tuyas.</p>
+    </section>
+
+    <section class="wrap" id="cuenta">
+      <h2 class="section-title">Cuenta regresiva</h2>
+      <p class="muted">Aunque obvio estará en 0 porque ya es hoy.</p>
+      <div class="countdown" id="countdown2"></div>
+    </section>
+  </main>
+
+  <footer>
+    Hecho con 💜 por tu mero Carnal de Carnales para <strong id="nombreFooter">[Nombre de tu hermano]</strong> — ¡Que sea un año con todo!
+  </footer>
+
+  <!-- Globos (emojis) -->
+  <div id="balloons"></div>
+
+  <script>
+    // ======= CONFIGURACION =======
+    const CONFIG = {
+      nombre: "Christian Bachomo El Gordo",
+      edad: "20's",
+      fecha: "2025-08-21",
+      lugar: "Guadalajara, MX",
+      mensajeIntro: "Que este año llegue con salud, metas cumplidas y muchas risas. 💜",
+      correoFelicitacion: "",
+    };
+    // =================================
+
+    // Rellena UI
+    const nombreEl = document.getElementById('nombre');
+    const nombreFooter = document.getElementById('nombreFooter');
+    const ageChip = document.getElementById('ageChip');
+    const dateBadge = document.getElementById('dateBadge');
+    const lugarEl = document.getElementById('lugar');
+    const introEl = document.getElementById('mensajeIntro');
+    const btnMail = document.getElementById('btnFelicitacion');
+
+    function formatDateISOtoDMY(iso){
+      const d = new Date(iso+"T00:00:00");
+      const day = d.getDate().toString().padStart(2,'0');
+      const mon = (d.getMonth()+1).toString().padStart(2,'0');
+      const year = d.getFullYear();
+      return `${day}/${mon}/${year}`;
+    }
+
+    nombreEl.textContent = CONFIG.nombre;
+    nombreFooter.textContent = CONFIG.nombre;
+    ageChip.textContent = CONFIG.edad;
+    dateBadge.textContent = formatDateISOtoDMY(CONFIG.fecha);
+    lugarEl.textContent = CONFIG.lugar;
+    introEl.textContent = CONFIG.mensajeIntro;
+    if(CONFIG.correoFelicitacion){
+      btnMail.href = `mailto:${CONFIG.correoFelicitacion}?subject=${encodeURIComponent('¡Feliz cumple!')}&body=${encodeURIComponent('Te deseo un año increíble 🎉')}`;
+    }
+
+    // Signo zodiacal simple (occidental)
+    function signoZodiacal(d){
+      const m = d.getMonth()+1, day = d.getDate();
+      const s = [
+        ['Capricornio',1,19],['Acuario',2,18],['Piscis',3,20],['Aries',4,19],['Tauro',5,20],['Géminis',6,20],
+        ['Cáncer',7,22],['Leo',8,22],['Virgo',9,22],['Libra',10,22],['Escorpio',11,21],['Sagitario',12,21]
+      ];
+      const date = m*100 + day;
+      let sign='Capricornio';
+      for(const [name, sm, sd] of s){ if(date <= sm*100+sd){ sign = name; break; } }
+      return sign;
+    }
+    document.getElementById('signo').textContent = signoZodiacal(new Date(CONFIG.fecha));
+
+    // Cuenta regresiva
+    function renderCountdown(targetISO, container){
+      const t = new Date(targetISO + 'T00:00:00');
+      function tick(){
+        const now = new Date();
+        let target = new Date(t);
+        // si ya pasó este año, cuenta para el siguiente
+        target.setFullYear(now.getFullYear());
+        if(target < now){ target.setFullYear(now.getFullYear()+1); }
+        const diff = target - now;
+        const days = Math.floor(diff/86400000);
+        const hours = Math.floor((diff%86400000)/3600000);
+        const mins = Math.floor((diff%3600000)/60000);
+        const secs = Math.floor((diff%60000)/1000);
+        container.innerHTML = `
+          <div class="timebox"><span class="num">${days}</span><span class="lab">días</span></div>
+          <div class="timebox"><span class="num">${hours}</span><span class="lab">horas</span></div>
+          <div class="timebox"><span class="num">${mins}</span><span class="lab">min</span></div>
+          <div class="timebox"><span class="num">${secs}</span><span class="lab">seg</span></div>`;
+      }
+      tick();
+      setInterval(tick, 1000);
+    }
+    renderCountdown(CONFIG.fecha, document.getElementById('countdown'));
+    renderCountdown(CONFIG.fecha, document.getElementById('countdown2'));
+
+    // Globos aleatorios
+    const balloons = document.getElementById('balloons');
+    const emojis = ['🎈','🎈','🎊','🎉','🎈','🎈'];
+    function spawnBalloon(){
+      const b = document.createElement('div');
+      b.className = 'balloon';
+      b.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+      b.style.left = Math.random()*100 + 'vw';
+      b.style.animationDuration = (7 + Math.random()*6) + 's';
+      balloons.appendChild(b);
+      setTimeout(()=>b.remove(), 13000);
+    }
+    setInterval(spawnBalloon, 1200);
+
+    // Confeti simple en canvas
+    const canvas = document.getElementById('confetti');
+    const ctx = canvas.getContext('2d');
+    let W, H; function resize(){ W = canvas.width = innerWidth * devicePixelRatio; H = canvas.height = innerHeight * devicePixelRatio; }
+    addEventListener('resize', resize); resize();
+
+    let confettis = [];
+    function shootConfetti(){
+      for(let i=0;i<180;i++){
+        confettis.push({
+          x: Math.random()*W,
+          y: -20*devicePixelRatio,
+          r: 4 + Math.random()*10,
+          a: Math.random()*Math.PI*2,
+          s: 2 + Math.random()*4,
+          w: (Math.random()>.5?1:-1)*(1+Math.random()*2),
+          c: `hsl(${Math.random()*360}, 90%, 60%)`,
+          t: 0
+        });
+      }
+    }
+
+    function loop(){
+      ctx.clearRect(0,0,W,H);
+      for(let i=0;i<confettis.length;i++){
+        const p = confettis[i];
+        p.t += 0.02;
+        p.y += p.s*devicePixelRatio*2;
+        p.x += Math.sin(p.t*3)*p.w;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.a + p.t);
+        ctx.fillStyle = p.c;
+        ctx.fillRect(-p.r/2, -p.r/2, p.r, p.r*0.6);
+        ctx.restore();
+      }
+      confettis = confettis.filter(p => p.y < H + 50);
+      requestAnimationFrame(loop);
+    }
+    loop();
+
+    document.getElementById('confettiBtn').addEventListener('click', shootConfetti);
+    // Disparo inicial
+    setTimeout(shootConfetti, 600);
+  </script>
+</body>
+</html>
